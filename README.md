@@ -1,29 +1,20 @@
 # Distributed-Computing-with-Spark-SQL
-ETL data pipeline to process StreetEasy data
-Author: Shravan Kuchkula (email: shravan.kuchkula@gmail.com)
+Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)
 Project Description:
 
-An online real-estate company is interested in understanding user enagagement by analyzing user search patterns to send targeted emails to the users with valid searches. A valid search is termed as one where the search metadata contains enabled:true and number of clicks is atleast 3.
 
-A daily snapshot of user search history and related data is saved to S3. Each file represents a single date, as noted by the filename: inferred_users.20180330.csv.gz. Each line in each file represents a unique user, as identified by id column. Information on each user's searches and engagement is stored in searches column. An example of this is shown below:
+<hr>
+Data Description:
+[San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data) </br>
+Fire Calls-For-Service includes all fire units responses to calls.</br>
+Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included. </br>
+There are multiple records for each call number. </br>
+Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
-rawdata
+The source data resides in S3 s3://davis-dsv1071/data:
 
-Data Description: The source data resides in S3 s3://<s3-bucket> for each day from 2018-01-20 till 2018-03-30, as shown:
+We will access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
 
-s3://<source-bucket>/
-inferred_users.20180120.csv.gz
-inferred_users.20180121.csv.gz
-inferred_users.20180122.csv.gz
-inferred_users.20180123.csv.gz
-inferred_users.20180124.csv.gz
-..
-inferred_users.20180325.csv.gz
-inferred_users.20180326.csv.gz
-inferred_users.20180327.csv.gz
-inferred_users.20180328.csv.gz
-inferred_users.20180329.csv.gz
-inferred_users.20180330.csv.gz
 All this data needs to be processed using a data pipeline to answer the following business questions:
 
 Produce a list of unique "valid searches".
