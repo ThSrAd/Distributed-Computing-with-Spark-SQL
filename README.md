@@ -97,7 +97,8 @@ After caching, Command takes just 0.68 seconds to run (Data is deserialized and 
 
 #### 2. LAZY CACHING
 
-Only a chunk of data is avilable in memory
+Only a chunk of data is available in memory, example data from only 1 partition
+```Select * from firecalls limit 100```
 
 #### 3.SHUFFLING PARTITIONS
 Narrow Transformations: The data required to compute the records in a single partition reside in at most one partition of the parent DataFrame.
