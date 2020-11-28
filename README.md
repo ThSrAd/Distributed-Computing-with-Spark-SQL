@@ -48,30 +48,7 @@ if (!dbutils.fs.mounts().map(_.mountPoint).contains(mountDir)) {
 }
 ```
 
-####  Spark Internals - Optimization
-Lets use caching to improve our query performance
-Pipeline Schedule: Our pipeline is required to adhere to the following guidelines:
 
-The DAG should run daily from 2018-01-20 to 2018-03-30
-The DAG should not have any dependencies on past runs.
-On failure, the task is retried for 3 times.
-Retries happen every 5 minutes.
-Do not email on retry.
-Shown below is the data pipeline (street_easy DAG) execution starting on 2018-01-20 and ending on 2018-03-30. airflow_tree_view Note: The data for 2018-01-29 and 2018-01-30 is not available, thus we are skipping over that.
-
-Destination S3 datasets and Redshift Table: After each successful run of the DAG, two files are stored in the destination bucket:
-
-s3://skuchkula-etl/unique_valid_searches_<date>.csv: Contains a list of unique valid searches for each day.
-s3://skuchkula-etl/valid_searches_<date>.csv: Contains a dataset with the following fields:
-user_id: Unique id of the user
-num_valid_searches: Number of valid searches
-avg_listings: Avg number of listings for that user
-type_of_search: Did the user search for:
-Only Rental
-Only Sale
-Both Rental and Sale
-Neither
-list_of_valid_searches: A list of valid searches for that user
 unique_valid_searches_{date}.csv contains unique valid searches per day:
 
 
@@ -95,6 +72,44 @@ We use the built-in Databricks visualization to see which neighborhoods have the
 
 ![image](https://user-images.githubusercontent.com/69738890/100490813-1c46a280-30e4-11eb-81e0-b8602b62c200.png)
 
+####  Spark Internals - Optimization
+ 1. CACHING DATA
+ Run ```  SELECT count(*) FROM fireCalls```
+ Command takes 3.20 seconds to run 
+ Now Cache the data
+ ![image](https://user-images.githubusercontent.com/69738890/100491620-a98cf580-30ea-11eb-9ac8-4325f4bbffc0.png)
+
+  If we check the Spark UI we will observe that our file in memory takes up ~59 MB, and on disk it takes up ~90 M,
+
+  ![image](https://user-images.githubusercontent.com/69738890/100491866-af83d600-30ec-11eb-9775-72f9b93a4e25.png)
+
+  Run this ```  SELECT count(*) FROM fireCalls``` again
+  Conclusion after caching, Command takes just 0.68 seconds to run (Data is deserialized and available in memory in spark,rather than on -disk, this speeds the process)
+  
+  2. LAZY CACHING 
+  Only a chunk of data is avilable in memory
+  
+  3. SHUFFLING PARTITIONS
+  Narrow Transformations: The data required to compute the records in a single partition reside in at most one partition of the parent DataFrame.
+  Examples SELECT (columns), DROP (columns), WHERE
+  
+  Wide Transformations: The data required to compute the records in a single partition may reside in many partitions of the parent DataFrame.
+  Examples include:DISTINCT, GROUP BY, ORDER BY
+  
+  Shuffling results in lot of i/o overload, manually we will be tweaking the spark.sql.shuffle.partitions parameter to controls how many resulting partitions there are after a   shuffle (wide transformation). By default, this value is 200 regardless of how large or small your dataset is, or your cluster configuration.Let's change this parameter to 8
+  
+  ![image](https://user-images.githubusercontent.com/69738890/100492310-69307600-30f0-11eb-9766-d34789b799da.png)
+   
+  Run below query:
+  ![image](https://user-images.githubusercontent.com/69738890/100492367-ecea6280-30f0-11eb-8812-83de2d9ca991.png)
+  
+   Time taken when spark.sql.shuffle.partition =8  =>3.75 s
+   Time taken when spark.sql.shuffle.partition =64  =>3.28s
+   Time taken when spark.sql.shuffle.partition =100  =>3.70s
+   Time taken when spark.sql.shuffle.partition =400  =>3.11s
+   
+   Conclusion: When dealing with small amounts of data, we must reduce the number of shuffle partitions otherwise we will end up with many partitions with small numbers of entries in each partition, which results in underutilization of all executors and increases the time it takes for data to be transferred over the network from the executor to the executor.
+On the other hand, when you have too much data and too few partitions, it causes fewer tasks to be processed in executors, but it increases the load on each individual executor and often leads to memory error
 
 
 How to run this project?
