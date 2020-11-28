@@ -1,12 +1,19 @@
 # Distributed-Computing-with-Spark-SQL
 Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)</br>
 
-### Project Description:<br>
+#### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
 
 <hr>
+#### Table of Contents
+* Data Description
+* Environment
+* Importing Data Files
+* Running Spark SQL Queries
+* Spark Internals - Optimization
 
-### Data Description:<br>
+<hr>
+#### Data Description:<br>
 This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
 The source for this data resides in S3 davis-dsv1071/data. You can access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
@@ -16,7 +23,7 @@ The entire dataset can be found on [San Francisco Fire Department Calls for Serv
 
 <hr>
 
-### Environment:</br>
+#### Environment:</br>
 
 Create an account and Login to Databricks Community Edition.
 
@@ -30,7 +37,7 @@ Create an account and Login to Databricks Community Edition.
 
 <hr>
 
-### Importing Data Files:</br>
+#### Importing Data Files:</br>
 
 If you are trying to mount the data from the AWS S3 into data bricks edition, Please use the bwlow Scala Code
 
@@ -48,12 +55,9 @@ dbutils.fs.mount(sourceStr, mountDir)
 }
 ```
 
-
-unique_valid_searches_{date}.csv contains unique valid searches per day:
-
-
 ![image](https://user-images.githubusercontent.com/69738890/100490743-56637480-30e3-11eb-9143-d42a30d311ab.png)
 
+<hr>
 ### Running Spark SQL Queries
 
 ![image](https://user-images.githubusercontent.com/69738890/100490775-b528ee00-30e3-11eb-9ff2-577e85ca8bbe.png)
@@ -62,17 +66,17 @@ unique_valid_searches_{date}.csv contains unique valid searches per day:
 
 ![image](https://user-images.githubusercontent.com/69738890/100490854-98d98100-30e4-11eb-99c6-7cf91d46a170.png)
 
-### Which neighborhoods have the most fire calls?
+#### Which neighborhoods have the most fire calls?
 
 ![image](https://user-images.githubusercontent.com/69738890/100490795-e1dd0580-30e3-11eb-8772-364f48c39ba1.png)
 
-### Visualizing Data
+#### Visualizing Data
 
 We use the built-in Databricks visualization to see which neighborhoods have the most fire calls.
 
 ![image](https://user-images.githubusercontent.com/69738890/100490813-1c46a280-30e4-11eb-81e0-b8602b62c200.png)
 
-###  Spark Internals - Optimization
+#### Spark Internals - Optimization
 - CACHING DATA
 Run ```  SELECT count(*) FROM fireCalls```
 Command takes 3.20 seconds to run 
