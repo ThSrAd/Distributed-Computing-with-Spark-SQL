@@ -5,6 +5,7 @@ Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)</br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
 
 <hr>
+
 #### Table of Contents
 * Data Description
 * Environment
@@ -13,6 +14,7 @@ This project aims at exploring structured dataset using spark SQL,understanding 
 * Spark Internals - Optimization
 
 <hr>
+
 #### Data Description:<br>
 This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
@@ -58,11 +60,12 @@ dbutils.fs.mount(sourceStr, mountDir)
 ![image](https://user-images.githubusercontent.com/69738890/100490743-56637480-30e3-11eb-9143-d42a30d311ab.png)
 
 <hr>
-### Running Spark SQL Queries
+
+#### Running Spark SQL Queries
 
 ![image](https://user-images.githubusercontent.com/69738890/100490775-b528ee00-30e3-11eb-9ff2-577e85ca8bbe.png)
 
-### Now look at calls by neighborhood.
+#### Now look at calls by neighborhood.
 
 ![image](https://user-images.githubusercontent.com/69738890/100490854-98d98100-30e4-11eb-99c6-7cf91d46a170.png)
 
