@@ -12,39 +12,28 @@ There are multiple records for each call number. </br>
 Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
 The source data resides in S3 s3://davis-dsv1071/data:
-
 We will access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
+
+Download a subset of the Data SF's Fire Department Calls for Service here. This dataset is about 85 MB.
+
+The entire dataset is ~1.7GB, and can be found on Data SF
+
+```
+val mountDir = "/mnt/davis"
+val source = "davis-dsv1071/data"
+
+if (!dbutils.fs.mounts().map(_.mountPoint).contains(mountDir)) {
+  println(s"Mounting $source\n to $mountDir")
+  val accessKey = "Enter your access Key Here"
+  val secretKey = "Enter your secret Key Here"
+  val sourceStr = s"s3a://$accessKey:$secretKey@$source"
+  
+  dbutils.fs.mount(sourceStr, mountDir)
+}
+```
 
 All this data needs to be processed using a data pipeline to answer the following business questions:
 
-Produce a list of unique "valid searches".
-Produce, for each date, the total number of valid searches that existed on that date.
-Produce, for each date, the total number of users who had valid searches on that date.
-Given this data, determine which is the most engaging search.
-What would the email traffic look like if the definition of a valid search is changed from 3 clicks to 2 clicks?
-Report any interesting trends over the timespan of the data available.
-Data Pipeline design: The design of the pipeline can be summarized as:
-
-Extract data from source S3 location.
-Process and Transform it using python and custom Airflow operators.
-Load a clean dataset and intermediate artifacts to destination S3 location.
-Calculate summary statistics and load the summary stats into Amazon Redshift.
-Figure showns the structure of the data pipeline as represented by a Airflow DAG dag
-
-Finally, I have made use of Jupyter Notebook to connect to the Redshift cluster and answer the questions of interest.
-
-Design Goals: As the data is stored in S3, we need a way to incrementally load each file, then process it and store that particular day's results back into S3. Doing so will allow us to perform further analysis later-on, on the cleaned dataset. Secondly, we need a way to aggregate the data and store it in a table to facilitate time-based analysis. Keeping these two goals in mind, the following tools were chosen:
-
-Apache Airflow will incrementally extract the data from S3 and process it in-memory and store the results back into a destination S3 bucket. The reason we need to process this in-memory is because, we don't want to download the file from S3 to airflow worker's disk, as this might fill-up the worker's disk and crash the worker process.
-Amazon Redshift is a simple cloud-managed data warehouse that can be integrated into pipelines without much effort. Airflow will then read the intermediate dataset created in the first step and aggregate the data per day and store it into a Redshift table.
-Pipeline Implementation: Apache Airflow is a Python framework for programmatically creating workflows in DAGs, e.g. ETL processes, generating reports, and retraining models on a daily basis. The Airflow UI automatically parses our DAG and creates a natural representation for the movement and transformation of data. A DAG simply is a collection of all the tasks you want to run, organized in a way that reflects their relationships and dependencies. A DAG describes how you want to carry out your workflow, and Operators determine what actually gets done.
-
-By default, airflow comes with some simple built-in operators like PythonOperator, BashOperator, DummyOperator etc., however, airflow lets you extend the features of a BaseOperator and create custom operators. For this project, I developed two custom operators:
-
-operators
-
-StreetEasyOperator: Extract data from source S3 bucket, processes the data in-memory by applying a series of transformations found inside transforms.py, then loads it to destination S3 bucket. Please see the code here: StreetEasyOperator
-ValidSearchStatsOperator: Takes data from destination S3 bucket, aggregates the data on a per-day basis, and uploads it to Redshift table search_stats. Please see the code here: ValidSearchStatsOperator
 Here's the directory organization:
 
 ├── README.md
@@ -91,139 +80,28 @@ Neither
 list_of_valid_searches: A list of valid searches for that user
 unique_valid_searches_{date}.csv contains unique valid searches per day:
 
-s3://skuchkula-etl/
-unique_valid_searches_20180120.csv
-unique_valid_searches_20180121.csv
-unique_valid_searches_20180122.csv
-unique_valid_searches_20180123.csv
-unique_valid_searches_20180214.csv
-...
-valid_searches_{date}.csv contains the valid searches dataset per day:
 
-s3://skuchkula-etl/
-valid_searches_20180120.csv
-valid_searches_20180121.csv
-valid_searches_20180122.csv
-valid_searches_20180123.csv
-valid_searches_20180214.csv
-...
-Amazon Redshift table:
+![image](https://user-images.githubusercontent.com/69738890/100490743-56637480-30e3-11eb-9143-d42a30d311ab.png)
 
-The ValidSearchesStatsOperator then takes each of datasets valid_searches_{date}.csv and calcuates summary stats and loads the results to search_stats table, as shown:
+#### Running Spark SQL Queries
 
-redshift
+![image](https://user-images.githubusercontent.com/69738890/100490775-b528ee00-30e3-11eb-9ff2-577e85ca8bbe.png)
 
-Answering business questions using data
-Business question: Produce a list of all unique "valid searches" given the above requirements.
-The list of all unique searches is stored in the destination S3 bucket: s3://skuchkula-etl/unique_valid_searches_{date}.csv. An example of the output is shown here
+#### Now look at calls by neighborhood.
 
-$ head -10 unique_valid_searches_20180330.csv
-searches
-38436711
-56011095
-3161333
-43841677
-42719934
-40166212
-44847718
-36981443
-13923552
-The code used to calculate the unique valid searches can be found here: transforms.py
+![image](https://user-images.githubusercontent.com/69738890/100490854-98d98100-30e4-11eb-99c6-7cf91d46a170.png)
 
-We will be making using of pandas, psycopg2 and matplotlib to use the data we gathered to answer the next set of business questions.
+#### Which neighborhoods have the most fire calls?
 
-import pandas as pd
-import pandas.io.sql as sqlio
-import configparser
-import psycopg2
+![image](https://user-images.githubusercontent.com/69738890/100490795-e1dd0580-30e3-11eb-8772-364f48c39ba1.png)
 
-import matplotlib.pyplot as plt
-plt.style.use('fivethirtyeight')
-Business question: Produce, for each date, the total number of valid searches that existed on that date.
-To answer this we need to connect to the Redshift cluster and query the search_stats table. First, we obtain a connection to Redshift cluster. The secrets are stored in the dwh-streeteasy.cfg file. Next, we execute the SQL query and store the result as a pandas dataframe.
+#### Visualizing Data
 
-config = configparser.ConfigParser()
-config.read('dwh-streeteasy.cfg')
+We use the built-in Databricks visualization to see which neighborhoods have the most fire calls.
 
-# connect to redshift cluster
-conn = psycopg2.connect("host={} dbname={} user={} password={} port={}".format(*config['CLUSTER'].values()))
-cur = conn.cursor()
+![image](https://user-images.githubusercontent.com/69738890/100490813-1c46a280-30e4-11eb-81e0-b8602b62c200.png)
 
-sql_query = "SELECT * FROM search_stats"
-df = sqlio.read_sql_query(sql_query, conn)
-df['day'] = pd.to_datetime(df['day'])
-df = df.set_index('day')
-print(df.shape)
-df.head()
-    (68, 6)
-dataframe
 
-From this dataframe, for this question, we are interested in finding out the total number of valid searches on a given day. This is captured in the num_searches column. Shown below is a plot showing the num_searches per day for the entire time-period.
-
-ax = df['num_searches'].plot(figsize=(12, 8), fontsize=12, linewidth=3, linestyle='--')
-ax.set_xlabel('Date', fontsize=16)
-ax.set_ylabel('Valid Searches', fontsize=16)
-ax.set_title('Total number of valid searches on each day')
-ax.axvspan('2018-03-21', '2018-03-24', color='red', alpha=0.3)
-plt.show()
-png
-
-Observation: The red band indicates a sharp drop in the number of valid searches on 2018-03-24.
-
-Business Question: Produce, for each date, the total number of valid searches that existed on that date.
-The total number of users with valid searches per day is captured in the num_users column of the dataframe. A similar trend can be observed for the num_users indicated by the red band.
-
-ax = df['num_users'].plot(figsize=(12, 8), fontsize=12, linewidth=3, linestyle='--')
-ax.set_xlabel('Date', fontsize=16)
-ax.set_ylabel('Number of users', fontsize=16)
-ax.set_title('Total number of users on each day')
-ax.axvspan('2018-03-21', '2018-03-24', color='red', alpha=0.3)
-plt.show()
-png
-
-Business question: Most engaging search
-From the data that is available, it appears that Rental searches are the most engaging ones. I am assuming that the number of valid searches is a good indicator to guage user engagement. It is evident from the below plot, that Rental Searches are consistently producing more valid searches than Sale type searches.
-
-ax = df[['num_rental_searches',
-         'num_sales_searches',
-         'num_rental_and_sales_searches',
-        'num_none_type_searches']].plot(figsize=(12, 8), fontsize=12, linewidth=2, linestyle='--')
-ax.set_xlabel('Date', fontsize=16)
-ax.set_ylabel('Valid Searches', fontsize=16)
-ax.set_title('Types of searches every day')
-ax.legend(fontsize=10)
-plt.show()
-png
-
-Business question: What would the email traffic look like if we changed the definition of a valid search from 3 clicks to 2?
-When the defintion of valid search is changed from clicks >= 3 to clicks >= 2 the number of searches and its corresponding stats increase in size. Shown below is a comparison for the first 3 days:
-
-clicks
-
-This means that the email traffic would increase.
-
-Business question: Report any interesting trends over the timespan of the data available.
-Mainly there are two trends observed with this timeseries data:
-
-One is that there is a steady increase in the number of searches made and also in the number of users. The stats corresponding to individual search type shows that Rental searches are growing faster than Sales searches.
-Second interesting thing that I found was a sharp dip in the number of searches and users on 2018-03-23, which could be something interesting to investigate.
-Recommendations
-Recommendations in data storage:
-In terms of storing data, using CSV files comes with some problems down the line. Here are some difficulties with CSV files:
-
-No defined schema: There are no data types included and column names beyond a header row.
-Nested data requires special handling. In addition to these issues with using CSV file format, Spark has some specific problems when working with CSV data:
-CSV files are quite slow to import and parse.
-The files cannot be shared between workers during the import process.
-If no schema is defined, then all data must be read before a schema can be inferred.
-Spark has a feature known as predicate pushdown - which is an idea of ordering tasks to do the least amount of work. Example, filtering data prior to processing is one of the primary optimizations of predicate pushdown, this drastically reduces the amount of information that must be processed in large data sets. Unfortunately, we cannot filter the CSV data via predicate pushdown.
-Finally, Spark processes are often multi-step and may utilize an intermediate file representation. These representations allow data to be used later without regenerating the data from source.
-Instead of using CSV, when possible use parquet file format.
-
-Parquet Format: Parquet is a compressed columnar data format and is structured with data accessible in chunks that allows efficient read/write operations without processing the entire file. This structured format supports Spark's predicate pushdown functionality, thus providing significant performance improvement. Finally, parquet files automatically include schema information and handle data encoding. This is perfect for intermediary or on-disk representation of processed data. Note that parquet files are binary file format and can only be used with proper tools.
-
-Recommendations for downstream processing:
-The search field coming through from the application appears to be YAML format. I found that writing regular expression to parse out the search field is prone to errors if the schema evolves. A better way to capture the search field is using JSON or AVRO, as this has some form of schema tied to it, so that downstream applications can know when the schema evolves.
 
 How to run this project?
 pre-requisites:
