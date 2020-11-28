@@ -1,5 +1,5 @@
 # Distributed-Computing-with-Spark-SQL
-Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)</br>
+Author: (thanujhaa.sriee@gmail.com)</br>
 
 #### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
