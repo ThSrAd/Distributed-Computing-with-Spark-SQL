@@ -80,7 +80,7 @@ We use the built-in Databricks visualization to see which neighborhoods have the
 ![image](https://user-images.githubusercontent.com/69738890/100490813-1c46a280-30e4-11eb-81e0-b8602b62c200.png)
 
 #### Spark Internals - Optimization
-- CACHING DATA
+1. CACHING DATA
 Run ```  SELECT count(*) FROM fireCalls```
 Command takes 3.20 seconds to run 
 Now Cache the data
@@ -94,10 +94,10 @@ Run this ```  SELECT count(*) FROM fireCalls``` again
 Conclusion:</br>
 After caching, Command takes just 0.68 seconds to run (Data is deserialized and available in memory in spark,rather than on -disk, this speeds the process)
 
-- LAZY CACHING
+2. AZY CACHING
 Only a chunk of data is avilable in memory
 
-- SHUFFLING PARTITIONS
+3. SHUFFLING PARTITIONS
 Narrow Transformations: The data required to compute the records in a single partition reside in at most one partition of the parent DataFrame.
 Examples SELECT (columns), DROP (columns), WHERE</br>
 
