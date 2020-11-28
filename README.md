@@ -1,22 +1,29 @@
 # Distributed-Computing-with-Spark-SQL
-Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)
-Project Description:
+Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)</br>
 
+####Project Description:</br>
+This project aims at exploring structured data using spark SQL, exploring Spark Internals to increase query performance by caching data and modifying Spark configurations. I have used Databricks communty edition and a dataset from San Francisco Fire Department and used Spark UI to analyze Spark SQL performance and identify bottlenecks.
 
 <hr>
-Data Description:
-[San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data) </br>
-Fire Calls-For-Service includes all fire units responses to calls.</br>
-Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included. </br>
-There are multiple records for each call number. </br>
-Addresses are associated with a block number, intersection or call box, not a specific address.</br>
+####Data Description:</br>
+This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.</br>
+Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
-The source data resides in S3 s3://davis-dsv1071/data:
-We will access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
+The source for thisdata resides in S3 davis-dsv1071/data. You can access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
 
-Download a subset of the Data SF's Fire Department Calls for Service here. This dataset is about 85 MB.
+Otherwise download a subset of the Data SF's Fire Department Calls for Service [here] (Enter Link name Here). This dataset is about 85 MB.
+The entire dataset can be found on [San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data)</br>
 
-The entire dataset is ~1.7GB, and can be found on Data SF
+
+Create an account and Login to Databricks Community Edition.
+
+![image](https://user-images.githubusercontent.com/69738890/100491118-ca534c00-30e6-11eb-868b-4bbe8909a818.png)
+
+![image](https://user-images.githubusercontent.com/69738890/100491124-dfc87600-30e6-11eb-9c03-04769a9f226e.png)
+
+![image](https://user-images.githubusercontent.com/69738890/100491155-1e5e3080-30e7-11eb-9410-e0bcd2f7f260.png)
+
+![image](https://user-images.githubusercontent.com/69738890/100491218-75fc9c00-30e7-11eb-9e76-df11afc3892b.png)
 
 ```
 val mountDir = "/mnt/davis"
