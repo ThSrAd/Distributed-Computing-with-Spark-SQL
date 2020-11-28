@@ -1,11 +1,12 @@
 # Distributed-Computing-with-Spark-SQL
 Author: Thanujhaa Sriee (email: thanujhaa.sriee@gmail.com)</br>
 
-#### Project Description:</br>
+#### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
 
 <hr>
-#### Data Description:</br>
+
+#### Data Description:<br>
 This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
 The source for this data resides in S3 davis-dsv1071/data. You can access this AWS S3 buckets in Databricks Environment by mounting buckets using DBFS or directly using APIs.
@@ -14,6 +15,7 @@ Otherwise download a subset of the Data SF's Fire Department Calls for Service [
 The entire dataset can be found on [San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data)</br>
 
 <hr>
+
 #### Environment:</br>
 
 - Create an account and Login to Databricks Community Edition.
@@ -25,6 +27,12 @@ The entire dataset can be found on [San Francisco Fire Department Calls for Serv
 ![image](https://user-images.githubusercontent.com/69738890/100491155-1e5e3080-30e7-11eb-9410-e0bcd2f7f260.png)
 
 ![image](https://user-images.githubusercontent.com/69738890/100491218-75fc9c00-30e7-11eb-9e76-df11afc3892b.png)
+
+<hr>
+
+#### Importing Data Files:</br>
+
+If you are trying to mount the data from the AWS S3 into data bricks edition, Please use the bwlow Scala Code
 
 ```
 val mountDir = "/mnt/davis"
@@ -40,30 +48,8 @@ if (!dbutils.fs.mounts().map(_.mountPoint).contains(mountDir)) {
 }
 ```
 
-All this data needs to be processed using a data pipeline to answer the following business questions:
-
-Here's the directory organization:
-
-├── README.md
-├── Report
-│   ├── Report_Shravan_Kuchkula.ipynb
-│   └── dwh-streeteasy.cfg
-├── docker-compose.yml
-├── images
-└── street-easy
-    ├── dags
-    │   ├── create_postgres_table.py
-    │   └── street_easy.py
-    ├── plugins
-    │   ├── __init__.py
-    │   ├── helpers
-    │   │   ├── __init__.py
-    │   │   └── transforms.py
-    │   └── operators
-    │       ├── __init__.py
-    │       ├── extract_and_transform_streeteasy.py
-    │       └── valid_search_stats.py
-    └── requirements.txt
+####  Spark Internals - Optimization
+Lets use caching to improve our query performance
 Pipeline Schedule: Our pipeline is required to adhere to the following guidelines:
 
 The DAG should run daily from 2018-01-20 to 2018-03-30
