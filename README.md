@@ -2,7 +2,7 @@
 Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)
 <hr height=5px>
 
-#### Project Description:<br>
+#### Project Goal:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
 
 <hr height = 5px>
