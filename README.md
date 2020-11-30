@@ -1,5 +1,5 @@
 # Distributed-Computing-with-Spark-SQL
-Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)
+Author: Thanujhaa Sriee (thanujhaa.sriee@gmail.com)
 <hr height=5px>
 
 #### Project Goal:<br>
