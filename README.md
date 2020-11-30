@@ -1,10 +1,9 @@
 # Distributed-Computing-with-Spark-SQL
-Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)</br>
+Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)
+<hr height=5px>
 
 #### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
-
-<hr>
 
 #### Table of Contents
 * Data Description
@@ -13,8 +12,6 @@ This project aims at exploring structured dataset using spark SQL,understanding 
 * Running Spark SQL Queries
 * Spark Internals - Optimization
 
-<hr>
-
 #### Data Description:<br>
 This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
 
@@ -22,8 +19,6 @@ The source for this data resides in S3 davis-dsv1071/data. You can access this A
 
 Otherwise download a subset of the Data SF's Fire Department Calls for Service [here] (Enter Link name Here). This dataset is about 85 MB.
 The entire dataset can be found on [San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data)</br>
-
-<hr>
 
 #### Environment:</br>
 
@@ -37,7 +32,7 @@ Create an account and Login to Databricks Community Edition.
 
 ![image](https://user-images.githubusercontent.com/69738890/100491218-75fc9c00-30e7-11eb-9e76-df11afc3892b.png)
 
-<hr>
+<hr height = 5px>
 
 #### Importing Data Files:</br>
 
@@ -59,7 +54,7 @@ dbutils.fs.mount(sourceStr, mountDir)
 
 ![image](https://user-images.githubusercontent.com/69738890/100490743-56637480-30e3-11eb-9143-d42a30d311ab.png)
 
-<hr>
+<hr height = 5px>
 
 #### Running Spark SQL Queries
 
@@ -79,6 +74,8 @@ We use the built-in Databricks visualization to see which neighborhoods have the
 
 ![image](https://user-images.githubusercontent.com/69738890/100490813-1c46a280-30e4-11eb-81e0-b8602b62c200.png)
 
+<hr height = 5px>
+
 #### Spark Internals - Optimization
 #### 1. CACHING DATA
 
@@ -95,10 +92,14 @@ Run this ```  SELECT count(*) FROM fireCalls``` again
 #### Conclusion:</br>
 After caching, Command takes just 0.68 seconds to run (Data is deserialized and available in memory in spark,rather than on -disk, this speeds the process)
 
+<hr height = 5px>
+
 #### 2. LAZY CACHING
 
 Only a chunk of data is available in memory, example data from only 1 partition
 ```Select * from firecalls limit 100```
+
+<hr height = 5px>
 
 #### 3.SHUFFLING PARTITIONS
 Narrow Transformations: The data required to compute the records in a single partition reside in at most one partition of the parent DataFrame.
