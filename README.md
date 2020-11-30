@@ -5,12 +5,16 @@ Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)
 #### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
 
+<hr height = 5px>
+
 #### Table of Contents
 * Data Description
 * Environment
 * Importing Data Files
 * Running Spark SQL Queries
 * Spark Internals - Optimization
+
+<hr height = 5px>
 
 #### Data Description:<br>
 This is a dataset from SanFrancisco Fire department, Calls-For-Service includes all fire units responses to calls.Each record includes the call number, incident number, address, unit identifier, call type, and disposition. All relevant time intervals are included.There are multiple records for each call number.Addresses are associated with a block number, intersection or call box, not a specific address.</br>
@@ -19,6 +23,8 @@ The source for this data resides in S3 davis-dsv1071/data. You can access this A
 
 Otherwise download a subset of the Data SF's Fire Department Calls for Service [here] (Enter Link name Here). This dataset is about 85 MB.
 The entire dataset can be found on [San Francisco Fire Department Calls for Service](https://data.sfgov.org/Public-Safety/Fire-Department-Calls-for-Service/nuek-vuh3/data)</br>
+
+<hr height = 5px>
 
 #### Environment:</br>
 
