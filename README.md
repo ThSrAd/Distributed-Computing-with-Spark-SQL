@@ -64,13 +64,18 @@ dbutils.fs.mount(sourceStr, mountDir)
 
 #### Running Spark SQL Queries
 
+
 ![image](https://user-images.githubusercontent.com/69738890/100490775-b528ee00-30e3-11eb-9ff2-577e85ca8bbe.png)
+
 
 #### Now look at calls by neighborhood.
 
+
 ![image](https://user-images.githubusercontent.com/69738890/100490854-98d98100-30e4-11eb-99c6-7cf91d46a170.png)
 
+
 #### Which neighborhoods have the most fire calls?
+
 
 ![image](https://user-images.githubusercontent.com/69738890/100490795-e1dd0580-30e3-11eb-8772-364f48c39ba1.png)
 
@@ -83,6 +88,7 @@ We use the built-in Databricks visualization to see which neighborhoods have the
 <hr height = 5px>
 
 #### Spark Internals - Optimization
+
 #### 1. CACHING DATA
 
 Run ```  SELECT count(*) FROM fireCalls```
@@ -95,6 +101,7 @@ If we check the Spark UI we will observe that our file in memory takes up ~59 MB
 ![image](https://user-images.githubusercontent.com/69738890/100491866-af83d600-30ec-11eb-9775-72f9b93a4e25.png)
 
 Run this ```  SELECT count(*) FROM fireCalls``` again
+
 #### Conclusion:</br>
 After caching, Command takes just 0.68 seconds to run (Data is deserialized and available in memory in spark,rather than on -disk, this speeds the process)
 
@@ -103,6 +110,7 @@ After caching, Command takes just 0.68 seconds to run (Data is deserialized and 
 #### 2. LAZY CACHING
 
 Only a chunk of data is available in memory, example data from only 1 partition
+
 ```Select * from firecalls limit 100```
 
 <hr height = 5px>
