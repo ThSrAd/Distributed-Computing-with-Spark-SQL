@@ -1,5 +1,5 @@
 # Distributed-Computing-with-Spark-SQL
-Author: (thanujhaa.sriee@gmail.com)</br>
+Author:Thanujhaa Sriee (thanujhaa.sriee@gmail.com)</br>
 
 #### Project Description:<br>
 This project aims at exploring structured dataset using spark SQL,understanding Spark Internals to increase query performance by caching data, using Spark UI to identify bottlenecks in performance. SQL performance aand  tuning Spark configurations[Executors,Core]. I have used Databricks community edition and a dataset from San Francisco Fire Department for analysis.
@@ -92,7 +92,7 @@ If we check the Spark UI we will observe that our file in memory takes up ~59 MB
 ![image](https://user-images.githubusercontent.com/69738890/100491866-af83d600-30ec-11eb-9775-72f9b93a4e25.png)
 
 Run this ```  SELECT count(*) FROM fireCalls``` again
-Conclusion:</br>
+#### Conclusion:</br>
 After caching, Command takes just 0.68 seconds to run (Data is deserialized and available in memory in spark,rather than on -disk, this speeds the process)
 
 #### 2. LAZY CACHING
@@ -119,7 +119,7 @@ Time taken when spark.sql.shuffle.partition =64  =>3.28s</br>
 Time taken when spark.sql.shuffle.partition =100  =>3.70s</br>
 Time taken when spark.sql.shuffle.partition =400  =>3.11s</br>
 
-Conclusion:</br>
+#### Conclusion:</br>
 When dealing with small amounts of data, we must reduce the number of shuffle partitions otherwise we will end up with many partitions with small numbers of entries in each partition, which results in underutilization of all executors and increases the time it takes for data to be transferred over the network from the executor to the executor.</br>
 On the other hand, when you have too much data and too few partitions, it causes fewer tasks to be processed in executors, but it increases the load on each individual executor and often leads to memory error
 
