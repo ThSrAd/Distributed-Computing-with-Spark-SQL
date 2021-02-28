@@ -42,7 +42,7 @@ Create an account and Login to Databricks Community Edition.
 
 #### Importing Data Files:</br>
 
-If you are trying to mount the data from the AWS S3 into data bricks edition, Please use the bwlow Scala Code
+If you are trying to mount the data from the AWS S3 into data bricks edition, Please use the below Scala Code
 
 ```
 val mountDir = "/mnt/davis"
